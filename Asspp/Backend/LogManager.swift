@@ -40,11 +40,11 @@ struct LogManagerHandler: LogHandler {
     func log(
         level: Logger.Level,
         message: Logger.Message,
-        metadata: Logger.Metadata?,
-        source: String,
-        file: String,
-        function: String,
-        line: UInt
+        metadata _: Logger.Metadata?,
+        source _: String,
+        file _: String,
+        function _: String,
+        line _: UInt,
     ) {
         let text = "[\(level)] [\(label)] \(message)"
         Swift.print(text)

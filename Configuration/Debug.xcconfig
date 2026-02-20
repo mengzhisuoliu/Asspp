@@ -19,6 +19,6 @@ ENABLE_TESTABILITY = YES
 ONLY_ACTIVE_ARCH = YES
 COPY_PHASE_STRIP = NO
 
-// MARK: - Script Sandboxing (disabled for SwiftFormat in Debug)
+// MARK: - Script Sandboxing
 
 ENABLE_USER_SCRIPT_SANDBOXING = NO

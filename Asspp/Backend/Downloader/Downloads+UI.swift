@@ -64,12 +64,12 @@ extension Downloads {
             let downloadOutput = try await ApplePackage.Download.download(
                 account: &account.account,
                 app: package.software,
-                externalVersionID: package.externalVersionID
+                externalVersionID: package.externalVersionID,
             )
             let request = Downloads.this.add(request: .init(
                 account: account,
                 package: package,
-                downloadOutput: downloadOutput
+                downloadOutput: downloadOutput,
             ))
             Downloads.this.resume(request: request)
         }

@@ -71,7 +71,7 @@ class Installer: Identifiable, @unchecked Sendable {
 
                 return try await req.fileio.asyncStreamFile(
                     at: packagePath.path,
-                    chunkSize: 64 * 1024
+                    chunkSize: 64 * 1024,
                 ) { result in
                     await MainActor.run {
                         self.status = .completed(result)
@@ -114,7 +114,7 @@ class Installer: Identifiable, @unchecked Sendable {
             minimumOsVersion: "",
             releaseDate: "",
             formattedPrice: "",
-            primaryGenreName: ""
+            primaryGenreName: "",
         ))
 
         app = try await Self.setupApp(port: port, secured: false)
@@ -122,7 +122,7 @@ class Installer: Identifiable, @unchecked Sendable {
         app.get("*") { req in
             try await req.fileio.asyncStreamFile(
                 at: certificateAtPath,
-                chunkSize: 64 * 1024
+                chunkSize: 64 * 1024,
             )
         }
 

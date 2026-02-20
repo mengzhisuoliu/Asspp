@@ -22,7 +22,7 @@ extension AppStore {
                 email: email,
                 password: password,
                 code: code.isEmpty ? "" : code,
-                cookies: []
+                cookies: [],
             )
             let userAccount = save(email: email, account: appleAccount)
             logger.info("authentication successful for user")
@@ -46,7 +46,7 @@ extension AppStore {
                 email: account.account.email,
                 password: account.account.password,
                 code: "",
-                cookies: account.account.cookie
+                cookies: account.account.cookie,
             )
             let updatedAccount = save(email: account.account.email, account: newAppleAccount)
             logger.info("account rotation successful for user id: \(id)")

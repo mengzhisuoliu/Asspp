@@ -98,7 +98,7 @@ while [ $# -gt 0 ]; do
             KEYCHAIN_PASSWORD_OVERRIDE="$2"
             shift 2
             ;;
-        -h|--help)
+        -h | --help)
             usage
             exit 0
             ;;
@@ -124,7 +124,7 @@ P12_VERIFY_ERR_FILE=$(mktemp)
 if ! openssl pkcs12 -in "$P12_FILE" -passin "pass:${P12_PASSWORD}" -nokeys >/dev/null 2>"$P12_VERIFY_ERR_FILE"; then
     # OpenSSL 3 may reject old PKCS#12 algorithms unless -legacy is enabled.
     if ! openssl pkcs12 -legacy -in "$P12_FILE" -passin "pass:${P12_PASSWORD}" -nokeys >/dev/null 2>"$P12_VERIFY_ERR_FILE"; then
-        P12_ERR_MSG=$(tr '\n' ' ' < "$P12_VERIFY_ERR_FILE" | sed 's/[[:space:]]\+/ /g')
+        P12_ERR_MSG=$(tr '\n' ' ' <"$P12_VERIFY_ERR_FILE" | sed 's/[[:space:]]\+/ /g')
         if echo "$P12_ERR_MSG" | grep -Eiq "unsupported|legacy|unknown pbe|unknown cipher|mac verify error|invalid password"; then
             error "Unable to read .p12. Password may be wrong, or file uses legacy encryption unsupported by default OpenSSL 3. Re-export .p12 from Keychain Access and retry. openssl: $P12_ERR_MSG"
         fi
@@ -142,7 +142,7 @@ cleanup() {
 }
 trap cleanup EXIT
 
-security cms -D -i "$PROFILE_FILE" > "$PROFILE_PLIST"
+security cms -D -i "$PROFILE_FILE" >"$PROFILE_PLIST"
 
 PROFILE_NAME=$(/usr/libexec/PlistBuddy -c "Print Name" "$PROFILE_PLIST")
 PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" "$PROFILE_PLIST")
@@ -189,7 +189,7 @@ case "$EXPORT_METHOD" in
     development)
         SIGNING_IDENTITY="Apple Development"
         ;;
-    ad-hoc|enterprise|app-store)
+    ad-hoc | enterprise | app-store)
         SIGNING_IDENTITY="Apple Distribution"
         ;;
     *)
@@ -207,20 +207,20 @@ PROFILE_B64=$(openssl base64 -A -in "$PROFILE_FILE")
 
 mkdir -p "$OUTPUT_DIR/secrets" "$OUTPUT_DIR/variables"
 
-printf '%s' "$CERT_B64" > "$OUTPUT_DIR/secrets/IOS_CERT_P12_BASE64.txt"
-printf '%s' "$P12_PASSWORD" > "$OUTPUT_DIR/secrets/IOS_CERT_PASSWORD.txt"
-printf '%s' "$PROFILE_B64" > "$OUTPUT_DIR/secrets/IOS_PROVISIONING_PROFILE_BASE64.txt"
-printf '%s' "$KEYCHAIN_PASSWORD" > "$OUTPUT_DIR/secrets/IOS_KEYCHAIN_PASSWORD.txt"
-printf '%s' "$TEAM_ID" > "$OUTPUT_DIR/secrets/IOS_TEAM_ID.txt"
+printf '%s' "$CERT_B64" >"$OUTPUT_DIR/secrets/IOS_CERT_P12_BASE64.txt"
+printf '%s' "$P12_PASSWORD" >"$OUTPUT_DIR/secrets/IOS_CERT_PASSWORD.txt"
+printf '%s' "$PROFILE_B64" >"$OUTPUT_DIR/secrets/IOS_PROVISIONING_PROFILE_BASE64.txt"
+printf '%s' "$KEYCHAIN_PASSWORD" >"$OUTPUT_DIR/secrets/IOS_KEYCHAIN_PASSWORD.txt"
+printf '%s' "$TEAM_ID" >"$OUTPUT_DIR/secrets/IOS_TEAM_ID.txt"
 
-printf '%s' "$EXPORT_METHOD" > "$OUTPUT_DIR/variables/IOS_EXPORT_METHOD.txt"
-printf '%s' "$SIGNING_IDENTITY" > "$OUTPUT_DIR/variables/IOS_SIGNING_IDENTITY.txt"
-printf '%s' "$BUNDLE_ID" > "$OUTPUT_DIR/variables/IOS_BUNDLE_ID.txt"
+printf '%s' "$EXPORT_METHOD" >"$OUTPUT_DIR/variables/IOS_EXPORT_METHOD.txt"
+printf '%s' "$SIGNING_IDENTITY" >"$OUTPUT_DIR/variables/IOS_SIGNING_IDENTITY.txt"
+printf '%s' "$BUNDLE_ID" >"$OUTPUT_DIR/variables/IOS_BUNDLE_ID.txt"
 if [ -n "$OTA_BASE_URL" ]; then
-    printf '%s' "${OTA_BASE_URL%/}" > "$OUTPUT_DIR/variables/IOS_OTA_BASE_URL.txt"
+    printf '%s' "${OTA_BASE_URL%/}" >"$OUTPUT_DIR/variables/IOS_OTA_BASE_URL.txt"
 fi
 
-cat > "$OUTPUT_DIR/profile.summary.txt" <<EOF
+cat >"$OUTPUT_DIR/profile.summary.txt" <<EOF
 profile_name=$PROFILE_NAME
 profile_uuid=$PROFILE_UUID
 team_id=$TEAM_ID
@@ -230,7 +230,7 @@ export_method=$EXPORT_METHOD
 signing_identity=$SIGNING_IDENTITY
 EOF
 
-cat > "$OUTPUT_DIR/apply-with-gh.sh" <<EOF
+cat >"$OUTPUT_DIR/apply-with-gh.sh" <<EOF
 #!/bin/zsh
 set -euo pipefail
 

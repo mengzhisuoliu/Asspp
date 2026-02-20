@@ -109,7 +109,7 @@ struct ProductHistoryView: View {
                     if vm.shouldDismiss {
                         dismiss()
                     }
-                })
+                }),
             )
         }
         .onAppear {

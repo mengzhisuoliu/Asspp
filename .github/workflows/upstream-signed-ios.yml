@@ -469,7 +469,7 @@ jobs:
           NOTES_PATH="${RUNNER_TEMP}/${NOTES_NAME}"
           cat > "${NOTES_PATH}" <<EOF
           Automated signed iOS build from source \`${SOURCE_REPO}\`.
-          
+
           - Source ref: \`${SOURCE_REF}\`
           - Source commit: \`${UPSTREAM_SHA}\`
           - Bundle ID: \`${BUNDLE_ID}\`

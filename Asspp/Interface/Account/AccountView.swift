@@ -87,7 +87,7 @@ struct AccountView: View {
                         },
                         actions: {
                             Button("Add Account") { addAccount.toggle() }
-                        }
+                        },
                     )
                     .padding()
                 }

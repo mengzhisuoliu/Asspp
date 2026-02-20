@@ -226,7 +226,7 @@ struct ProductView: View {
                     try await ApplePackage.Authenticator.rotatePasswordToken(for: &userAccount.account)
                     try await ApplePackage.Purchase.purchase(
                         account: &userAccount.account,
-                        app: archive.package.software
+                        app: archive.package.software,
                     )
                 }
                 acquiringLicense = false

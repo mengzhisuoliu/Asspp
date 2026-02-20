@@ -15,17 +15,17 @@ extension Installer {
     static let pem = Bundle.main.url(
         forResource: "localhost.qaq.wiki-key",
         withExtension: "pem",
-        subdirectory: "Certificates/localhost.qaq.wiki"
+        subdirectory: "Certificates/localhost.qaq.wiki",
     )
     static let crt = Bundle.main.url(
         forResource: "localhost.qaq.wiki",
         withExtension: "pem",
-        subdirectory: "Certificates/localhost.qaq.wiki"
+        subdirectory: "Certificates/localhost.qaq.wiki",
     )
     static let ca = Bundle.main.url(
         forResource: "rootCA",
         withExtension: "pem",
-        subdirectory: "Certificates/localhost.qaq.wiki"
+        subdirectory: "Certificates/localhost.qaq.wiki",
     )!
 
     static var caURL: URL = .init(fileURLWithPath: "/tmp/")
@@ -41,7 +41,7 @@ extension Installer {
             certificateChain: NIOSSLCertificate
                 .fromPEMFile(crt.path)
                 .map { NIOSSLCertificateSource.certificate($0) },
-            privateKey: NIOSSLPrivateKeySource.privateKey(NIOSSLPrivateKey(file: pem.path, format: .pem))
+            privateKey: NIOSSLPrivateKeySource.privateKey(NIOSSLPrivateKey(file: pem.path, format: .pem)),
         )
     }
 }

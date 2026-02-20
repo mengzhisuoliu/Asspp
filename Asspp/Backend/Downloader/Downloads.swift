@@ -116,7 +116,7 @@ class Downloads {
     private func finalize(manifest: PackageManifest, preparedContentAt downloadedFile: URL) async throws {
         try? FileManager.default.createDirectory(
             at: manifest.targetLocation.deletingLastPathComponent(),
-            withIntermediateDirectories: true
+            withIntermediateDirectories: true,
         )
         try? FileManager.default.removeItem(at: manifest.targetLocation)
 

@@ -57,11 +57,12 @@
   `https://<owner>.github.io/<repo>/ios/latest/install.html`
 
 # Mac
+
 - 前往 [Releases](https://github.com/Lakr233/Asspp/releases) 页面下载最新版本 Asspp.zip
 - 解压后打开 Asspp.app
 
-
 ### 首次运行与信任应用（推荐步骤）
+
 1. 尝试双击打开应用；若出现“无法打开，因为无法确认开发者”或类似提示：
    - 在 Finder 中定位到 Asspp.app，按住 Control 键并点击应用图标，选择“打开”，在弹窗中再次点击“打开”。此操作会为该应用建立信任记录，通常只需执行一次。
 2. 如果 Control+点击无效或仍受阻：
@@ -69,7 +70,6 @@
 3. 建议从本仓库 Releases 下载并核验发布信息，确保来源可信后再按上述方法信任并打开应用。
 
 > 说明：以上步骤是 macOS Gatekeeper 的标准处理方式，旨在保护系统安全。按照推荐流程操作可以最小化风险并确保应用能正常运行。
-
 
 ## 📋 已构建的包
 
@@ -120,24 +120,24 @@ base64 -i your_profile.mobileprovision | tr -d '\n'
 
 在 `Settings -> Secrets and variables -> Actions -> Secrets` 配置：
 
-| 名称                              | 必填 | 说明 |
-| --------------------------------- | ---- | ---- |
-| `IOS_CERT_P12_BASE64`             | 是   | `.p12` 的 base64 |
-| `IOS_CERT_PASSWORD`               | 是   | `.p12` 导出密码 |
-| `IOS_PROVISIONING_PROFILE_BASE64` | 是   | `.mobileprovision` 的 base64 |
-| `IOS_KEYCHAIN_PASSWORD`           | 否   | Runner 临时 keychain 密码 |
+| 名称                              | 必填 | 说明                            |
+| --------------------------------- | ---- | ------------------------------- |
+| `IOS_CERT_P12_BASE64`             | 是   | `.p12` 的 base64                |
+| `IOS_CERT_PASSWORD`               | 是   | `.p12` 导出密码                 |
+| `IOS_PROVISIONING_PROFILE_BASE64` | 是   | `.mobileprovision` 的 base64    |
+| `IOS_KEYCHAIN_PASSWORD`           | 否   | Runner 临时 keychain 密码       |
 | `IOS_TEAM_ID`                     | 否   | Team ID（不填则从描述文件读取） |
 
 ### 6. 配置 Variables
 
 在 `Settings -> Secrets and variables -> Actions -> Variables` 配置：
 
-| 名称                   | 必填 | 示例                     | 说明 |
-| ---------------------- | ---- | ------------------------ | ---- |
-| `IOS_EXPORT_METHOD`    | 否   | `ad-hoc`                 | 默认 `ad-hoc` |
-| `IOS_SIGNING_IDENTITY` | 否   | `Apple Distribution`     | 留空则按导出方式自动选择 |
-| `IOS_BUNDLE_ID`        | 否   | `wiki.qaq.Asspp`         | 覆盖 Bundle ID（需与描述文件匹配） |
-| `IOS_OTA_BASE_URL`     | 否   | `https://app.example.com`| OTA 基础 URL，默认使用 GitHub Pages |
+| 名称                   | 必填 | 示例                      | 说明                                |
+| ---------------------- | ---- | ------------------------- | ----------------------------------- |
+| `IOS_EXPORT_METHOD`    | 否   | `ad-hoc`                  | 默认 `ad-hoc`                       |
+| `IOS_SIGNING_IDENTITY` | 否   | `Apple Distribution`      | 留空则按导出方式自动选择            |
+| `IOS_BUNDLE_ID`        | 否   | `wiki.qaq.Asspp`          | 覆盖 Bundle ID（需与描述文件匹配）  |
+| `IOS_OTA_BASE_URL`     | 否   | `https://app.example.com` | OTA 基础 URL，默认使用 GitHub Pages |
 
 ### 7. 可选：配置自定义域名
 

@@ -15,7 +15,7 @@ git clean -fdx -f
 git reset --hard
 
 # Generate Developer.xcconfig for CI (codesign completely disabled)
-cat > "$SRCROOT/Configuration/Developer.xcconfig" << 'EOF'
+cat >"$SRCROOT/Configuration/Developer.xcconfig" <<'EOF'
 // CI-generated Developer.xcconfig
 // Code signing is completely disabled for CI builds
 DEVELOPMENT_TEAM =
@@ -38,8 +38,7 @@ xcodebuild -workspace "$WORKSPACE" \
     | xcbeautify
 
 BUILD_PRODUCT_PATH=""
-for i in $(find "$SRCROOT/build/DerivedDataApp" -name "$BUILD_PRODUCT")
-do
+for i in $(find "$SRCROOT/build/DerivedDataApp" -name "$BUILD_PRODUCT"); do
     BUILD_PRODUCT_PATH=$i
     break
 done

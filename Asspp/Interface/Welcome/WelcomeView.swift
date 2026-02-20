@@ -50,7 +50,7 @@ struct WelcomeView: View {
         .background(
             ColorfulView(color: .constant(.winter))
                 .opacity(0.25)
-                .ignoresSafeArea()
+                .ignoresSafeArea(),
         )
         #if os(macOS)
         .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)

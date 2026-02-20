@@ -73,7 +73,7 @@
                 package: package,
                 storeID: account.store,
                 region: ApplePackage.Configuration.countryCode(for: account.store) ?? "--",
-                accountID: account.appleId
+                accountID: account.appleId,
             ))
         }
 
@@ -139,7 +139,7 @@
         private func _checkForUpdate(_ app: InstalledApp, for device: DeviceCTL.Device, process: Process) async throws {
             let latest = try await ApplePackage.Lookup.lookup(
                 bundleID: app.info.id,
-                countryCode: app.info.region
+                countryCode: app.info.region,
             )
 
             guard latest.version.compare(app.info.package.software.version, options: [.numeric]) == .orderedDescending else {
@@ -149,7 +149,7 @@
                     code: 1,
                     userInfo: [
                         NSLocalizedDescriptionKey: "No updates",
-                    ]
+                    ],
                 )
             }
             var updatedApp = app.info
@@ -167,7 +167,7 @@
                     code: 1,
                     userInfo: [
                         NSLocalizedDescriptionKey: "Download failed",
-                    ]
+                    ],
                 )
             }
             app.state = .downloading(request)
@@ -179,7 +179,7 @@
                     code: 1,
                     userInfo: [
                         NSLocalizedDescriptionKey: "iPA not found",
-                    ]
+                    ],
                 )
             }
 
@@ -207,29 +207,29 @@
         var symbol: String {
             switch self {
             case .iPhone:
-                return "iphone"
+                "iphone"
             case .iPad:
-                return "ipad"
+                "ipad"
             case .appleWatch:
-                return "applewatch"
+                "applewatch"
             }
         }
 
         var osVersionPrefix: String {
             switch self {
             case .iPhone:
-                return "iOS"
+                "iOS"
             case .iPad:
-                return "iPadOS"
+                "iPadOS"
             case .appleWatch:
-                return "watchOS"
+                "watchOS"
             }
         }
     }
 
     extension Error {
         var failureMessages: [String] {
-            [localizedDescription, (self as NSError).userInfo[NSLocalizedFailureReasonErrorKey] as? String].compactMap { $0 }
+            [localizedDescription, (self as NSError).userInfo[NSLocalizedFailureReasonErrorKey] as? String].compactMap(\.self)
         }
     }
 

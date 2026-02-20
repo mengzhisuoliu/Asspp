@@ -52,7 +52,7 @@ do {
 try? FileManager.default.createDirectory(
     at: documentsDirectory,
     withIntermediateDirectories: true,
-    attributes: nil
+    attributes: nil,
 )
 let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
     .appendingPathComponent(bundleIdentifier)
@@ -69,7 +69,7 @@ do {
 try? FileManager.default.createDirectory(
     at: temporaryDirectory,
     withIntermediateDirectories: true,
-    attributes: nil
+    attributes: nil,
 )
 
 _ = ProcessInfo.processInfo.hostName
@@ -106,7 +106,7 @@ App.main()
     import AppKit
 
     class AppDelegate: NSObject, NSApplicationDelegate {
-        func applicationDidFinishLaunching(_ notification: Notification) {
+        func applicationDidFinishLaunching(_: Notification) {
             Task { @MainActor in
                 self.observeDownloadCount()
             }
@@ -124,18 +124,18 @@ App.main()
             }
         }
 
-        func applicationWillResignActive(_ notification: Notification) {
+        func applicationWillResignActive(_: Notification) {
             // Handle app going to background on macOS
         }
 
-        func applicationDidBecomeActive(_ notification: Notification) {
+        func applicationDidBecomeActive(_: Notification) {
             // Handle app coming to foreground on macOS
             if let mainWindow = NSApplication.shared.windows.first(where: { $0.identifier?.rawValue == "main-window" }) {
                 mainWindow.styleMask = [.titled, .closable, .fullSizeContentView, .fullScreen]
             }
         }
 
-        func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        func applicationShouldTerminateAfterLastWindowClosed(_: NSApplication) -> Bool {
             Downloads.this.runningTaskCount == 0
         }
     }

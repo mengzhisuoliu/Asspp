@@ -33,7 +33,7 @@ struct PackageDisplayView: View {
                     .background(LinearGradient(
                         gradient: Gradient(colors: [.clear, .white]),
                         startPoint: .init(x: 0, y: 0.5),
-                        endPoint: .init(x: 0.2, y: 0.5)
+                        endPoint: .init(x: 0.2, y: 0.5),
                     ).blendMode(.destinationOut))
                     .transition(.scale)
                 }

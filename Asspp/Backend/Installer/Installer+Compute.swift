@@ -104,7 +104,7 @@ extension Installer {
         (try? PropertyListSerialization.data(
             fromPropertyList: installManifest,
             format: .xml,
-            options: .zero
+            options: .zero,
         )) ?? .init()
     }
 }

@@ -16,7 +16,7 @@
 @discardableResult
 func AirDrop(
     items: [Any],
-    excludedActivityTypes: [String]? = nil
+    excludedActivityTypes: [String]? = nil,
 ) -> Bool {
     #if canImport(UIKit)
         guard let source = UIWindow.mainWindow?.rootViewController?.topMostController else {
@@ -27,11 +27,11 @@ func AirDrop(
         newView.frame = .init(origin: .zero, size: .init(width: 10, height: 10))
         newView.center = .init(
             x: source.view.bounds.width / 2 - 5,
-            y: source.view.bounds.height / 2 - 5
+            y: source.view.bounds.height / 2 - 5,
         )
         let vc = UIActivityViewController(
             activityItems: items,
-            applicationActivities: nil
+            applicationActivities: nil,
         )
         vc.excludedActivityTypes = excludedActivityTypes?.map(UIActivity.ActivityType.init(rawValue:))
         vc.popoverPresentationController?.sourceView = source.view

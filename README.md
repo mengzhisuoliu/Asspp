@@ -73,7 +73,6 @@ For a command-line or library version of Asspp, check out [ApplePackage](https:/
 
 > These steps follow macOS Gatekeeper practices and help minimize security risks while allowing you to run unsigned or self-signed apps.
 
-
 ## 📋 Prebuilt Package
 
 Check the [Releases](https://github.com/Lakr233/Asspp/releases) page.
@@ -123,24 +122,24 @@ base64 -i your_profile.mobileprovision | tr -d '\n'
 
 Set these in `Settings -> Secrets and variables -> Actions -> Secrets`:
 
-| Name                              | Required | Description                                     |
-| --------------------------------- | -------- | ----------------------------------------------- |
-| `IOS_CERT_P12_BASE64`             | Yes      | Base64 string of your `.p12`                    |
-| `IOS_CERT_PASSWORD`               | Yes      | Password used when exporting `.p12`             |
-| `IOS_PROVISIONING_PROFILE_BASE64` | Yes      | Base64 string of your `.mobileprovision`        |
-| `IOS_KEYCHAIN_PASSWORD`           | No       | Temporary keychain password on runner           |
+| Name                              | Required | Description                                          |
+| --------------------------------- | -------- | ---------------------------------------------------- |
+| `IOS_CERT_P12_BASE64`             | Yes      | Base64 string of your `.p12`                         |
+| `IOS_CERT_PASSWORD`               | Yes      | Password used when exporting `.p12`                  |
+| `IOS_PROVISIONING_PROFILE_BASE64` | Yes      | Base64 string of your `.mobileprovision`             |
+| `IOS_KEYCHAIN_PASSWORD`           | No       | Temporary keychain password on runner                |
 | `IOS_TEAM_ID`                     | No       | Team ID override (auto-read from profile if not set) |
 
 ### 6. Configure repository variables
 
 Set these in `Settings -> Secrets and variables -> Actions -> Variables`:
 
-| Name                   | Required | Example                          | Description |
-| ---------------------- | -------- | -------------------------------- | ----------- |
-| `IOS_EXPORT_METHOD`    | No       | `ad-hoc`                         | Defaults to `ad-hoc` |
-| `IOS_SIGNING_IDENTITY` | No       | `Apple Distribution`             | Auto-selected by export method if empty |
-| `IOS_BUNDLE_ID`        | No       | `wiki.qaq.Asspp`                 | Override Bundle ID (must match profile) |
-| `IOS_OTA_BASE_URL`     | No       | `https://app.example.com`        | Custom OTA base URL; defaults to GitHub Pages URL |
+| Name                   | Required | Example                   | Description                                       |
+| ---------------------- | -------- | ------------------------- | ------------------------------------------------- |
+| `IOS_EXPORT_METHOD`    | No       | `ad-hoc`                  | Defaults to `ad-hoc`                              |
+| `IOS_SIGNING_IDENTITY` | No       | `Apple Distribution`      | Auto-selected by export method if empty           |
+| `IOS_BUNDLE_ID`        | No       | `wiki.qaq.Asspp`          | Override Bundle ID (must match profile)           |
+| `IOS_OTA_BASE_URL`     | No       | `https://app.example.com` | Custom OTA base URL; defaults to GitHub Pages URL |
 
 ### 7. (Optional) Use custom domain for OTA URL
 
@@ -173,7 +172,6 @@ If your repository name is exactly `<owner>.github.io`, then URL does not includ
 - Install fails immediately: your device UDID is not in provisioning profile
 - App cannot be verified: trust your certificate/profile in iOS settings
 - Signing error about Bundle ID: ensure `IOS_BUNDLE_ID` matches App ID in profile
-
 
 ## Star History
 

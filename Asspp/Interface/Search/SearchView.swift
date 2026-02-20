@@ -69,14 +69,14 @@ struct SearchView: View {
         Group {
             if !possibleRegionKeys.isEmpty {
                 buildPickView(
-                    for: possibleRegionKeys
+                    for: possibleRegionKeys,
                 ) {
                     Label("Available Regions", systemImage: "checkmark.seal")
                 }
                 if isAllRegionsWrappedInMenu {
                     Menu {
                         buildPickView(
-                            for: regionKeys
+                            for: regionKeys,
                         ) {
                             EmptyView()
                         }
@@ -86,7 +86,7 @@ struct SearchView: View {
                 } else {
                     // Wrapping in Menu on macOS will cause an addition hover to show all the regions
                     buildPickView(
-                        for: regionKeys
+                        for: regionKeys,
                     ) {
                         Label("All Regions", systemImage: "globe")
                     }
@@ -94,7 +94,7 @@ struct SearchView: View {
             } else {
                 // Reduce one interaction
                 buildPickView(
-                    for: regionKeys
+                    for: regionKeys,
                 ) {
                     EmptyView()
                 }
@@ -162,11 +162,11 @@ struct SearchView: View {
                     term: searchKey,
                     countryCode: searchRegion,
                     limit: 32,
-                    entityType: searchType
+                    entityType: searchType,
                 )
                 if let app = try? await ApplePackage.Lookup.lookup(
                     bundleID: searchKey,
-                    countryCode: searchRegion
+                    countryCode: searchRegion,
                 ) {
                     result.insert(app, at: 0)
                 }

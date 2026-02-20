@@ -45,10 +45,6 @@ xcconfig hierarchy: `Debug.xcconfig`/`Release.xcconfig` → `Base.xcconfig` → 
 
 Deployment targets: iOS 15.0, macOS 15.0. Supports iPhone, iPad, and Mac (native, not Catalyst).
 
-## Formatting
-
-SwiftFormat 0.57.2 is configured via `.swiftformat` at the repo root. The `BuildTools/Package.swift` pins the exact version. Key settings: 4-space indent, LF line breaks, alpha-sorted imports, `--disable unusedArguments`.
-
 ## Architecture
 
 ### Backend Layer (`Asspp/Backend/`)

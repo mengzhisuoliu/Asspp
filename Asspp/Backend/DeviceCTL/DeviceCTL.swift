@@ -224,7 +224,7 @@
                     hidden: hidden,
                     internalApp: internalApp,
                     removable: removable,
-                    url: url
+                    url: url,
                 )
             }
         }

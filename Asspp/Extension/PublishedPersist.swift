@@ -126,7 +126,7 @@ struct PublishedPersist<Value: Codable> {
     static subscript<EnclosingSelf: ObservableObject>(
         _enclosingInstance object: EnclosingSelf,
         wrapped _: ReferenceWritableKeyPath<EnclosingSelf, Value>,
-        storage storageKeyPath: ReferenceWritableKeyPath<EnclosingSelf, PublishedPersist<Value>>
+        storage storageKeyPath: ReferenceWritableKeyPath<EnclosingSelf, PublishedPersist<Value>>,
     ) -> Value {
         get { object[keyPath: storageKeyPath].value }
         set {
