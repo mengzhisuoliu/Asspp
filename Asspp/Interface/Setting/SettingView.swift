@@ -13,7 +13,13 @@ import SwiftUI
 #endif
 
 struct SettingView: View {
-    @State var vm = AppStore.this
+    @Environment(\.openURL) private var openURL
+    @State private var vm = AppStore.this
+
+    @State private var deviceIdTapCount = 0
+    @State private var showDeviceIdWarning = false
+    @State private var editingDeviceId = false
+    @State private var deviceIdDraft = ""
 
     var body: some View {
         #if os(iOS)
@@ -48,18 +54,43 @@ struct SettingView: View {
             Section {
                 Text(ProcessInfo.processInfo.hostName)
                     .redacted(reason: .placeholder, isEnabled: vm.demoMode)
-                Text(ApplePackage.Configuration.deviceIdentifier)
-                    .font(.system(.body, design: .monospaced))
-                    .textSelection(.enabled)
-                    .redacted(reason: .placeholder, isEnabled: vm.demoMode)
+                if editingDeviceId {
+                    TextField("Device GUID", text: $deviceIdDraft)
+                        .font(.system(.body, design: .monospaced))
+                        .autocorrectionDisabled()
+                    #if canImport(UIKit)
+                        .textInputAutocapitalization(.never)
+                    #endif
+                    Button("Save") {
+                        let trimmed = deviceIdDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !trimmed.isEmpty else { return }
+                        vm.deviceIdentifier = trimmed
+                        ApplePackage.Configuration.deviceIdentifier = trimmed
+                        editingDeviceId = false
+                    }
+                    Button("Cancel", role: .destructive) {
+                        editingDeviceId = false
+                    }
+                } else {
+                    Text(vm.deviceIdentifier)
+                        .font(.system(.body, design: .monospaced))
+                        .textSelection(.enabled)
+                        .redacted(reason: .placeholder, isEnabled: vm.demoMode)
+                        .onTapGesture {
+                            deviceIdTapCount += 1
+                            if deviceIdTapCount >= 10 {
+                                deviceIdTapCount = 0
+                                showDeviceIdWarning = true
+                            }
+                        }
+                }
                 #if canImport(UIKit)
                     Button("Open Settings") {
-                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                        openURL(URL(string: UIApplication.openSettingsURLString)!)
                     }
-                #endif
-                #if canImport(AppKit) && !canImport(UIKit)
+                #else
                     Button("Open Settings") {
-                        NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:")!)
+                        openURL(URL(string: "x-apple.systempreferences:")!)
                     }
                 #endif
             } header: {
@@ -67,11 +98,20 @@ struct SettingView: View {
             } footer: {
                 Text("Grant local network permission to install apps and communicate with system services. If hostname is empty, open Settings to grant permission.")
             }
+            .alert("Edit Device GUID", isPresented: $showDeviceIdWarning) {
+                Button("Edit", role: .destructive) {
+                    deviceIdDraft = vm.deviceIdentifier
+                    editingDeviceId = true
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Changing the device GUID may cause all existing accounts to stop working. Apple limits the number of devices you can sign in with at once.")
+            }
 
             #if canImport(UIKit)
                 Section {
                     Button("Install Certificate") {
-                        UIApplication.shared.open(Installer.caURL)
+                        openURL(Installer.caURL)
                     }
                 } header: {
                     Text("SSL")
@@ -104,28 +144,13 @@ struct SettingView: View {
 
             Section {
                 Button("@Lakr233") {
-                    #if canImport(UIKit)
-                        UIApplication.shared.open(URL(string: "https://twitter.com/Lakr233")!)
-                    #endif
-                    #if canImport(AppKit) && !canImport(UIKit)
-                        NSWorkspace.shared.open(URL(string: "https://twitter.com/Lakr233")!)
-                    #endif
+                    openURL(URL(string: "https://twitter.com/Lakr233")!)
                 }
                 Button("Buy me a coffee! ☕️") {
-                    #if canImport(UIKit)
-                        UIApplication.shared.open(URL(string: "https://github.com/sponsors/Lakr233/")!)
-                    #endif
-                    #if canImport(AppKit) && !canImport(UIKit)
-                        NSWorkspace.shared.open(URL(string: "https://github.com/sponsors/Lakr233/")!)
-                    #endif
+                    openURL(URL(string: "https://github.com/sponsors/Lakr233/")!)
                 }
                 Button("Feedback & Contact") {
-                    #if canImport(UIKit)
-                        UIApplication.shared.open(URL(string: "https://github.com/Lakr233/Asspp")!)
-                    #endif
-                    #if canImport(AppKit) && !canImport(UIKit)
-                        NSWorkspace.shared.open(URL(string: "https://github.com/Lakr233/Asspp")!)
-                    #endif
+                    openURL(URL(string: "https://github.com/Lakr233/Asspp")!)
                 }
             } header: {
                 Text("About")

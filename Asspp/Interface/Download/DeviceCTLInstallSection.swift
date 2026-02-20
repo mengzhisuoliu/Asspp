@@ -3,11 +3,11 @@
     import SwiftUI
 
     struct DeviceCTLInstallSection: View {
-        @State var dm = DeviceManager()
-        @State var installed: DeviceCTL.App?
-        @State var isLoading = false
-        @State var wiggle: Bool = false
-        @State var installSuccess = false
+        @State private var dm = DeviceManager()
+        @State private var installed: DeviceCTL.App?
+        @State private var isLoading = false
+        @State private var wiggle: Bool = false
+        @State private var installSuccess = false
         let package: PackageManifest
 
         var ipaFile: URL {

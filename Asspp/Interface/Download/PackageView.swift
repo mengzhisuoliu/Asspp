@@ -6,6 +6,7 @@
 //
 
 import ApplePackage
+import ButtonKit
 import Kingfisher
 import SwiftUI
 
@@ -26,15 +27,15 @@ struct PackageView: View {
 
     @Environment(\.dismiss) var dismiss
     #if os(iOS)
-        @State var installer: Installer?
-        @State var error: String = ""
+        @State private var installer: Installer?
+        @State private var error: String = ""
     #endif
     #if os(macOS)
         @State private var copied = false
     #endif
 
-    @State var vm = AppStore.this
-    @State var downloads = Downloads.this
+    @State private var vm = AppStore.this
+    @State private var downloads = Downloads.this
 
     var body: some View {
         FormOnTahoeList {
@@ -52,15 +53,12 @@ struct PackageView: View {
                 #endif
                 #if os(iOS)
                     Section {
-                        Button("Install") {
-                            Task {
-                                do {
-                                    installer = try await Installer(archive: archive, path: url)
-                                } catch {
-                                    self.error = error.localizedDescription
-                                }
-                            }
+                        AsyncButton {
+                            installer = try await Installer(archive: archive, path: url)
+                        } label: {
+                            Text("Install")
                         }
+                        .disabledWhenLoading()
                         .sheet(item: $installer) {
                             installer?.destroy()
                             installer = nil

@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ProductHistoryView: View {
     @State var vm: AppPackageArchive
-    @State var showErrorAlert = false
+    @State private var showErrorAlert = false
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
@@ -101,16 +101,14 @@ struct ProductHistoryView: View {
                 }
             }
         }
-        .alert(isPresented: $showErrorAlert) {
-            Alert(
-                title: Text("Oops"),
-                message: Text(vm.error ?? String(localized: "Unknown Error")),
-                dismissButton: .default(Text("OK"), action: {
-                    if vm.shouldDismiss {
-                        dismiss()
-                    }
-                }),
-            )
+        .alert("Oops", isPresented: $showErrorAlert) {
+            Button("OK") {
+                if vm.shouldDismiss {
+                    dismiss()
+                }
+            }
+        } message: {
+            Text(vm.error ?? String(localized: "Unknown Error"))
         }
         .onAppear {
             guard vm.versionItems.isEmpty else { return }

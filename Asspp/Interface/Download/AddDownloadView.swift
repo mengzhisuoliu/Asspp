@@ -6,21 +6,21 @@
 //
 
 import ApplePackage
+import ButtonKit
 import SwiftUI
 
 struct AddDownloadView: View {
-    @State var bundleID: String = ""
-    @State var searchType: EntityType = .iPhone
-    @State var selection: AppStore.UserAccount.ID = .init()
-    @State var obtainDownloadURL = false
-    @State var hint = ""
+    @State private var bundleID: String = ""
+    @State private var searchType: EntityType = .iPhone
+    @State private var selection: AppStore.UserAccount.ID = .init()
+    @State private var hint = ""
 
-    @FocusState var searchKeyFocused
+    @FocusState private var searchKeyFocused
 
-    @State var avm = AppStore.this
-    @State var dvm = Downloads.this
+    @State private var avm = AppStore.this
+    @State private var dvm = Downloads.this
 
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
 
     var account: AppStore.UserAccount? {
         avm.accounts.first { $0.id == selection }
@@ -35,7 +35,6 @@ struct AddDownloadView: View {
                     .textInputAutocapitalization(.none)
                 #endif
                     .focused($searchKeyFocused)
-                    .onSubmit { startDownload() }
                 Picker("EntityType", selection: $searchType) {
                     ForEach(EntityType.allCases, id: \.self) { type in
                         Text(type.rawValue)
@@ -66,11 +65,18 @@ struct AddDownloadView: View {
             }
 
             Section {
-                Button(obtainDownloadURL ? "Communicating with Apple..." : "Request Download") {
-                    startDownload()
+                AsyncButton {
+                    guard let account else { return }
+                    searchKeyFocused = false
+                    let software = try await ApplePackage.Lookup.lookup(bundleID: bundleID, countryCode: account.account.store)
+                    let appPackage = AppStore.AppPackage(software: software)
+                    try await dvm.startDownload(for: appPackage, accountID: account.id)
+                    hint = "Download Requested"
+                } label: {
+                    Text("Request Download")
                 }
+                .disabledWhenLoading()
                 .disabled(bundleID.isEmpty)
-                .disabled(obtainDownloadURL)
                 .disabled(account == nil)
             } footer: {
                 if hint.isEmpty {
@@ -82,27 +88,5 @@ struct AddDownloadView: View {
             }
         }
         .navigationTitle("Direct Download")
-    }
-
-    func startDownload() {
-        guard let account else { return }
-        searchKeyFocused = false
-        obtainDownloadURL = true
-        Task {
-            do {
-                let software = try await ApplePackage.Lookup.lookup(bundleID: bundleID, countryCode: account.account.store)
-                let appPackage = AppStore.AppPackage(software: software)
-                try await dvm.startDownload(for: appPackage, accountID: account.id)
-                await MainActor.run {
-                    obtainDownloadURL = false
-                    hint = "Download Requested"
-                }
-            } catch {
-                await MainActor.run {
-                    obtainDownloadURL = false
-                    hint = "Unable to retrieve download URL. Please try again later." + "\n" + error.localizedDescription
-                }
-            }
-        }
     }
 }

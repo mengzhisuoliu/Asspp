@@ -6,21 +6,21 @@
 //
 
 import ApplePackage
+import ButtonKit
 import SwiftUI
 
 struct AddAccountView: View {
-    @State var vm = AppStore.this
-    @Environment(\.dismiss) var dismiss
+    @State private var vm = AppStore.this
+    @Environment(\.dismiss) private var dismiss
 
-    @State var email: String = ""
-    @State var password: String = ""
-    @State var isPasswordHidden = true
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var isPasswordHidden = true
 
-    @State var codeRequired: Bool = false
-    @State var code: String = ""
+    @State private var codeRequired: Bool = false
+    @State private var code: String = ""
 
-    @State var error: Error?
-    @State var openProgress: Bool = false
+    @State private var error: Error?
 
     var body: some View {
         FormOnTahoeList {
@@ -77,20 +77,23 @@ struct AddAccountView: View {
                 .transition(.opacity)
             }
             Section {
-                if openProgress {
-                    ForEach([UUID()], id: \.self) { _ in
-                        ProgressView()
-                        #if os(macOS)
-                            .controlSize(.small)
-                        #endif
+                AsyncButton {
+                    logger.info("starting authentication for user")
+                    do {
+                        _ = try await vm.authenticate(email: email, password: password, code: code.isEmpty ? "" : code)
+                        logger.info("authentication successful for user")
+                        dismiss()
+                    } catch {
+                        logger.error("authentication failed: \(error.localizedDescription)")
+                        self.error = error
+                        codeRequired = true
+                        throw error
                     }
-                } else {
-                    Button("Authenticate") {
-                        authenticate()
-                    }
-                    .disabled(openProgress)
-                    .disabled(email.isEmpty || password.isEmpty)
+                } label: {
+                    Text("Authenticate")
                 }
+                .disabledWhenLoading()
+                .disabled(email.isEmpty || password.isEmpty)
             } footer: {
                 if let error {
                     Text(error.localizedDescription)
@@ -108,22 +111,5 @@ struct AddAccountView: View {
             .navigationBarTitleDisplayMode(.inline)
         #endif
             .navigationTitle("Add Account")
-    }
-
-    func authenticate() {
-        openProgress = true
-        logger.info("starting authentication for user")
-        Task {
-            defer { openProgress = false }
-            do {
-                _ = try await vm.authenticate(email: email, password: password, code: code.isEmpty ? "" : code)
-                logger.info("authentication successful for user")
-                dismiss()
-            } catch {
-                logger.error("authentication failed: \(error.localizedDescription)")
-                self.error = error
-                codeRequired = true
-            }
-        }
     }
 }

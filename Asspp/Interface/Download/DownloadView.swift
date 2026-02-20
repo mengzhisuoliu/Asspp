@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DownloadView: View {
-    @State var vm = Downloads.this
+    @State private var vm = Downloads.this
 
     var body: some View {
         #if os(iOS)
@@ -60,7 +60,7 @@ struct DownloadView: View {
                 ForEach(actions, id: \.self) { action in
                     let label = vm.getActionLabel(for: action)
                     Button(role: label.isDestructive ? .destructive : .none) {
-                        Task { vm.performDownloadAction(for: req, action: action) }
+                        vm.performDownloadAction(for: req, action: action)
                     } label: {
                         Label(label.title, systemImage: label.systemImage)
                     }

@@ -13,20 +13,21 @@ struct SearchView: View {
     @AppStorage("searchKey") var searchKey = ""
     @AppStorage("searchRegion") var searchRegion = "US"
     @FocusState var searchKeyFocused
-    @State var searchType = EntityType.iPhone
+    @State private var searchType = EntityType.iPhone
 
-    @State var searching = false
+    @State private var searching = false
     let regionKeys = Array(ApplePackage.Configuration.storeFrontValues.keys.sorted())
 
-    @State var searchInput: String = ""
+    @State private var searchInput: String = ""
     #if DEBUG
         @AppStorage("searchResults") // reduce API calls
         var searchResult: [AppStore.AppPackage] = []
     #else
-        @State var searchResult: [AppStore.AppPackage] = []
+        @State private var searchResult: [AppStore.AppPackage] = []
     #endif
 
-    @State var vm = AppStore.this
+    @State private var navigationPath = NavigationPath()
+    @State private var vm = AppStore.this
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     var possibleRegion: Set<String> {
         vm.possibleRegions
@@ -34,7 +35,7 @@ struct SearchView: View {
 
     var body: some View {
         #if os(iOS)
-            NavigationStack {
+            NavigationStack(path: $navigationPath) {
                 if #available(iOS 26.0, *) {
                     modernContent
                 } else {
@@ -42,7 +43,7 @@ struct SearchView: View {
                 }
             }
         #else
-            NavigationStack {
+            NavigationStack(path: $navigationPath) {
                 legacyContent
             }
         #endif
@@ -128,7 +129,7 @@ struct SearchView: View {
             if searching || !searchResult.isEmpty {
                 Section(searching ? "Searching..." : "\(searchResult.count) Results") {
                     ForEach(searchResult) { item in
-                        NavigationLink(destination: ProductView(archive: item, region: searchRegion)) {
+                        NavigationLink(value: ProductDestination(archive: item, region: searchRegion)) {
                             ArchivePreviewView(archive: item)
                         }
                     }
@@ -136,6 +137,12 @@ struct SearchView: View {
                 }
                 .transition(.opacity)
             }
+        }
+        .navigationDestination(for: ProductDestination.self) { dest in
+            ProductView(archive: dest.archive, region: dest.region, navigationPath: $navigationPath)
+        }
+        .navigationDestination(for: PackageManifest.self) { manifest in
+            PackageView(pkg: manifest)
         }
         .animation(.spring, value: searchResult)
     }
@@ -186,6 +193,11 @@ struct SearchView: View {
             }
         }
     }
+}
+
+struct ProductDestination: Hashable {
+    let archive: AppStore.AppPackage
+    let region: String
 }
 
 extension SearchView {

@@ -6,6 +6,7 @@
 //
 
 import ApplePackage
+import ButtonKit
 import SwiftUI
 
 #if canImport(UIKit)
@@ -18,40 +19,45 @@ import SwiftUI
 struct AccountDetailView: View {
     let accountId: AppStore.UserAccount.ID
 
-    @State var vm = AppStore.this
+    @State private var vm = AppStore.this
     @Environment(\.dismiss) var dismiss
 
     private var account: AppStore.UserAccount? {
         vm.accounts.first { $0.id == accountId }
     }
 
-    @State var rotating = false
-    @State var rotatingHint = ""
+    @State private var rotatingHint = ""
 
     var body: some View {
         FormOnTahoeList {
             Section {
-                Text(account?.account.email ?? "")
-                    .onTapGesture { copyToClipboard(account?.account.email) }
-                    .redacted(reason: .placeholder, isEnabled: vm.demoMode)
+                Button { copyToClipboard(account?.account.email) } label: {
+                    Text(account?.account.email ?? "")
+                }
+                .foregroundStyle(.primary)
+                .redacted(reason: .placeholder, isEnabled: vm.demoMode)
             } header: {
                 Text("Apple ID")
             } footer: {
                 Text("This email is used to sign in to Apple services.")
             }
             Section {
-                Text("\(account?.account.store ?? "") - \(ApplePackage.Configuration.countryCode(for: account?.account.store ?? "") ?? "Unknown")")
-                    .onTapGesture { copyToClipboard(account?.account.email) }
+                Button { copyToClipboard(account?.account.store) } label: {
+                    Text("\(account?.account.store ?? "") - \(ApplePackage.Configuration.countryCode(for: account?.account.store ?? "") ?? "Unknown")")
+                }
+                .foregroundStyle(.primary)
             } header: {
                 Text("Country Code")
             } footer: {
                 Text("App Store requires this country code to identify your package region.")
             }
             Section {
-                Text(account?.account.directoryServicesIdentifier ?? "")
-                    .font(.system(.body, design: .monospaced))
-                    .onTapGesture { copyToClipboard(account?.account.email) }
-                    .redacted(reason: .placeholder, isEnabled: vm.demoMode)
+                Button { copyToClipboard(account?.account.directoryServicesIdentifier) } label: {
+                    Text(account?.account.directoryServicesIdentifier ?? "")
+                        .font(.system(.body, design: .monospaced))
+                }
+                .foregroundStyle(.primary)
+                .redacted(reason: .placeholder, isEnabled: vm.demoMode)
             } header: {
                 Text("Directory Services ID")
             } footer: {
@@ -61,12 +67,18 @@ struct AccountDetailView: View {
                 SecureField(text: .constant(account?.account.passwordToken ?? "")) {
                     Text("Password Token")
                 }
-                if rotating {
-                    Button("Rotating...") {}
-                        .disabled(true)
-                } else {
-                    Button("Rotate Token") { rotate() }
+                AsyncButton {
+                    do {
+                        try await vm.rotate(id: account?.id ?? "")
+                        rotatingHint = String(localized: "Success")
+                    } catch {
+                        rotatingHint = error.localizedDescription
+                        throw error
+                    }
+                } label: {
+                    Text("Rotate Token")
                 }
+                .disabledWhenLoading()
             } header: {
                 Text("Password Token")
             } footer: {
@@ -86,24 +98,6 @@ struct AccountDetailView: View {
             }
         }
         .navigationTitle("Account Details")
-    }
-
-    func rotate() {
-        rotating = true
-        Task {
-            do {
-                try await vm.rotate(id: account?.id ?? "")
-                await MainActor.run {
-                    rotating = false
-                    rotatingHint = String(localized: "Success")
-                }
-            } catch {
-                await MainActor.run {
-                    rotating = false
-                    rotatingHint = error.localizedDescription
-                }
-            }
-        }
     }
 
     func copyToClipboard(_ text: String?) {

@@ -51,24 +51,25 @@
 
         var body: some View {
             ZStack {
-                VStack(spacing: 32) {
-                    ForEach([icon], id: \.self) { icon in
-                        Image(systemName: icon)
-                            .font(.system(.largeTitle, design: .rounded))
-                            .transition(.opacity.combined(with: .scale))
-                    }
-                    ForEach([text], id: \.self) { text in
-                        Text(text)
-                            .font(.system(.body, design: .rounded))
-                            .transition(.opacity)
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
+                Button {
                     if case .ready = installer.status {
                         UIApplication.shared.open(installer.iTunesLink)
                     }
+                } label: {
+                    VStack(spacing: 32) {
+                        ForEach([icon], id: \.self) { icon in
+                            Image(systemName: icon)
+                                .font(.system(.largeTitle, design: .rounded))
+                                .transition(.opacity.combined(with: .scale))
+                        }
+                        ForEach([text], id: \.self) { text in
+                            Text(text)
+                                .font(.system(.body, design: .rounded))
+                                .transition(.opacity)
+                        }
+                    }
                 }
+                .buttonStyle(.plain)
                 .onAppear {
                     if case .ready = installer.status {
                         UIApplication.shared.open(installer.iTunesLink)
