@@ -48,7 +48,7 @@
                 try? FileManager.default.removeItem(at: temporaryJsonFile)
             }
             let arguments = args + [
-                "-j", "tmp/\(filename).json", // will be prefixed with sandbox path by system
+                "-j", temporaryJsonFile.path(),
                 "-q",
             ]
             guard try run(arguments, process: process) else {
